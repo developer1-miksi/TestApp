@@ -1,113 +1,75 @@
+definitions:
+  env_vars: &env_vars
+    FIREBASE_PROJECT_ID: your-firebase-project-id
+    ASSETS_URL: your-assets-url-for-client # URL to zip file containing the client-specific assets including google services files
+
+  scripts:
+    - &get_assets
+      name: Get assets and configuration files from Firebase Storage
+      script: |
+        # Ensure Firebase CLI is installed
+        curl -sL https://firebase.tools | bash
+
+        # Authenticate with Firebase
+        firebase login:ci --token $FIREBASE_TOKEN
+
+        # Download client-specific assets
+        echo "Downloading assets for ${CLIENT_ID}"
+        curl -o client_assets.zip $ASSETS_URL || echo "Failed to download client assets"
+        unzip client_assets.zip -d ./assets
+
+    - name: Replace assets, .env, and Google services files
+      script: |
+        # Replace images
+        cp ./assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
+        cp ./assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
+        cp ./assets/images/error_image.png ./assets/images/
+
+        # Replace Google services files
+        cp ./assets/android/google-services.json ./android/app/
+        cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
+
+        # Replace .env file
+        cp ./assets/client/client.env ./assets/
+
 workflows:
-  android-client-release:
-    name: Android client release
-    instance_type: mac_mini_m1
-    environment:
-      flutter: 3.13.7
-      groups:
-        - sandbox
-    scripts:
-      - name: Change package name
-        script: |
-          flutter pub add rename
-          dart pub global activate rename
-          rename setBundleId --targets android --value $ANDROID_PACKAGE_NAME
-
-      - name: Change Android app name
-        script: rename setAppName --targets ios,android --value $APP_NAME
-
-      - name: Download and unzip assets
-        script: |
-          echo "Downloading assets from $ASSETS_URL"
-          curl -O $ASSETS_URL || echo "Failed to download assets"
-          echo "Unzipping assets.zip"
-          unzip -o assets.zip || echo "Failed to unzip assets.zip"
-
-      - name: Download and unzip Android Google service json file
-        script: |
-          echo "Downloading firebase from $ANDROID_FIREBASE"
-          curl -O $ANDROID_FIREBASE || echo "Failed to download google-service"
-          echo "Unzipping google-service.zip"
-          unzip -o <COMPANY_NAME>-sandbox-android.zip -d android/app || echo "Failed to unzip google-service.zip"
-
-      - name: Download and unzip Android App Icon
-        script: |
-          echo "Downloading icon from $ANDROID_ICON"
-          curl -O $ANDROID_ICON || echo "Failed to download res.zip"
-          echo "Unzipping res.zip"
-          unzip -o res.zip -d android/app/src/main || echo "Failed to unzip res.zip"
-
-      - name: Decode Keystore and Properties
-        script: |
-          echo "$KEYSTORE" | base64 --decode > ./android/app/<COMPANY_NAME>.jks
-          echo "$KEY_PROPERTIES" | base64 --decode > ./android/key.properties
-
-      - name: Install dependencies
-        script: |
-          flutter packages pub get 
-          cd android && ./gradlew wrapper --gradle-version 7.4 --distribution-type all
-          cd ..
-      - name: Flutter build after package name change
-        script: |
-          flutter build apk --split-per-abi
-
-    artifacts:
-      - build/**/outputs/**/*.apk
-
   ios-client-release:
     name: iOS client release
     instance_type: mac_mini_m1
+    labels:
+      - ${CLIENT_ID}
     environment:
-      groups:
-        - sandbox
       vars:
+        <<: *env_vars
         XCODE_SCHEME: "Runner"
+        FIREBASE_TOKEN: your-firebase-ci-token
     scripts:
+      - *get_assets
+      - name: Replace assets, .env, and Google services files
+
       - name: Change iOS app name
-        script: |
-          echo "Change iOS app name to $APP_NAME"
-          /usr/libexec/PlistBuddy -c "Set :CFBundleName $APP_NAME" -c "Set :CFBundleDisplayName $APP_NAME" ios/${XCODE_SCHEME}/Info.plist
-
-      - name: Set bundle id
-        script: |
-          echo "Change iOS Bundle Id to $IOS_BUNDLE_ID"
-          sed -i '' -e 's/PRODUCT_BUNDLE_IDENTIFIER \= [^\;]*\;/PRODUCT_BUNDLE_IDENTIFIER = '${IOS_BUNDLE_ID}';/' ios/${XCODE_SCHEME}.xcodeproj/project.pbxproj
-
-      # - name: Change iOS icons
-      #   script: |
-      #     echo "Downloading icon from $IOS_ICON"
-      #     curl -O $IOS_ICON || echo "Failed to download Assets.xcassets"
-      #     echo "Unzipping Assets.xcassets.zip"
-      #     unzip -o Assets.xcassets.zip -d ios/${XCODE_SCHEME}/Assets.xcassets/ || echo "Failed to unzip Assets.xcassets"
-
-      - name: Download and unzip assets
-        script: |
-          echo "Downloading assets from $ASSETS_URL"
-          curl -O $ASSETS_URL || echo "Failed to download assets"
-          echo "Unzipping assets.zip"
-          unzip -o assets.zip || echo "Failed to unzip assets.zip"
-
-      - name: Install pods
-        script: find . -name "Podfile" -execdir pod install \;
-
-      - name: iOS code signing
-        script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$IOS_BUNDLE_ID" --type IOS_APP_STORE --create
-          keychain add-certificates
-          xcode-project use-profiles
+        script: /usr/libexec/PlistBuddy -c "Set :CFBundleName $APP_NAME" -c "Set :CFBundleDisplayName $APP_NAME" ios/${XCODE_SCHEME}/Info.plist
 
       - name: Install dependencies
         script: flutter packages pub get
 
       - name: Flutter build ipa and automatic versioning
         script: |
-          flutter build ipa --release --export-options-plist /Users/builder/export_options.plist
-
+          BUILD_NUMBER=$(($(app-store-connect get-latest-testflight-build-number "$APP_STORE_ID") + 1))
+          flutter build ipa --release \
+          --build-name=1.0.$BUILD_NUMBER \
+          --build-number=$BUILD_NUMBER\
+          --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
-# Document
-# Make key.properties base64 with this command -> openssl base64 -in key.properties -out outName.txt
-# Make <COMPANY_NAME>.jks base64 with this command -> openssl base64 -in <COMPANY_NAME>.jks -out jskOutName.txt
-# make rsa CERTIFACE_KEY | ssh-keygen -t rsa -b 2048 -m PEM -f ~/Desktop/ios_distribution_private_key -q -N ""
-
+      - /tmp/xcodebuild_logs/*.log
+      - test-results/flutter.json
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+      email:
+        recipients:
+          - name@mail.com
