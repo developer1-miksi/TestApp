@@ -1,28 +1,16 @@
 definitions:
   env_vars: &env_vars
     FIREBASE_PROJECT_ID: your-firebase-project-id
-    BASE_ASSETS_URL: your-base-assets-url # Base URL for assets, excluding the specific filename
+    BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
+    ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
 
   scripts:
     - &get_assets
-      name: Get assets and configuration files from Firebase Storage
+      name: Download and unpack client-specific assets
       script: |
-        # Ensure Firebase CLI is installed
-        curl -sL https://firebase.tools | bash
-        
-        # Authenticate with Firebase
-        firebase login:ci --token $FIREBASE_TOKEN
-        
-        # Dynamic asset file name based on CLIENT_ID
-        ASSET_FILE_NAME="assets_${CLIENT_ID}.zip"
-        
-        # Construct the full URL for the assets file
-        ASSETS_URL="${BASE_ASSETS_URL}/${ASSET_FILE_NAME}"
-
-        # Download client-specific assets
         echo "Downloading assets from ${ASSETS_URL}"
-        curl -o client_assets.zip $ASSETS_URL || echo "Failed to download ${ASSET_FILE_NAME}"
-        unzip client_assets.zip -d ./assets
+        curl -o "assets_${CLIENT_ID}.zip" "${ASSETS_URL}" || echo "Failed to download assets_${CLIENT_ID}.zip"
+        unzip "assets_${CLIENT_ID}.zip" -d ./assets
 
     - name: Replace assets, .env, and Google services files
       script: |
@@ -49,6 +37,8 @@ workflows:
         <<: *env_vars
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
+        APP_NAME: "Default App Name" # Default, set this per build as needed
+        BUNDLE_ID: "com.example.app" # Default, set this per build as needed
     scripts:
       - *get_assets
       - name: Replace assets, .env, and Google services files
