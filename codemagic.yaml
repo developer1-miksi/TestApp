@@ -34,15 +34,12 @@ workflows:
       - ${CLIENT_ID}
     environment:
       groups:
-        - env_vars
+        - env_vars # Make sure this group includes CLIENT_ID and ASSETS_URL
       vars:
-        <<: *env_vars
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
         APP_NAME: "Default App Name"
         BUNDLE_ID: "com.example.app"
-        CLIENT_ID: "" # Ensure this is dynamically set if needed
-        ASSETS_URL: "" # Th
     scripts:
       - name: Download and unpack client-specific assets
         script: |
@@ -51,16 +48,11 @@ workflows:
           unzip "assets_${CLIENT_ID}.zip" -d ./assets
       - name: Replace assets, .env, and Google services files
         script: |
-          # Replace images
           cp ./assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
           cp ./assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
           cp ./assets/images/error_image.png ./assets/images/
-
-          # Replace Google services files
           cp ./assets/android/google-services.json ./android/app/
           cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
-
-          # Replace .env file
           cp ./assets/client/client.env ./assets/
       - name: Change iOS app name
         script: |
