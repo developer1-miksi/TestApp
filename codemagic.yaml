@@ -33,6 +33,8 @@ workflows:
     labels:
       - ${CLIENT_ID}
     environment:
+      groups:
+        - env_vars
       vars:
         <<: *env_vars
         XCODE_SCHEME: "Runner"
