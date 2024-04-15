@@ -1,8 +1,8 @@
 definitions:
   env_vars: &env_vars
     FIREBASE_PROJECT_ID: your-firebase-project-id
-    BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
-    ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
+    # BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
+    # ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
 
   scripts:
     - &get_assets
@@ -18,7 +18,7 @@ definitions:
         cp ./assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
         cp ./assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
         cp ./assets/images/error_image.png ./assets/images/
-        
+
         # Replace Google services files
         cp ./assets/android/google-services.json ./android/app/
         cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
@@ -41,8 +41,8 @@ workflows:
         FIREBASE_TOKEN: your-firebase-ci-token
         APP_NAME: "Default App Name"
         BUNDLE_ID: "com.example.app"
-        CLIENT_ID: "example-client-id" # Ensure this is dynamically set if needed
-        ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # Th
+        CLIENT_ID: "" # Ensure this is dynamically set if needed
+        ASSETS_URL: "" # Th
     scripts:
       - name: Download and unpack client-specific assets
         script: |
@@ -55,7 +55,7 @@ workflows:
           cp ./assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
           cp ./assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
           cp ./assets/images/error_image.png ./assets/images/
-          
+
           # Replace Google services files
           cp ./assets/android/google-services.json ./android/app/
           cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
