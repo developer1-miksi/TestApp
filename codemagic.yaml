@@ -41,6 +41,8 @@ workflows:
         FIREBASE_TOKEN: your-firebase-ci-token
         APP_NAME: "Default App Name"
         BUNDLE_ID: "com.example.app"
+        CLIENT_ID: "example-client-id" # Ensure this is dynamically set if needed
+        ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # Th
     scripts:
       - name: Download and unpack client-specific assets
         script: |
