@@ -48,12 +48,12 @@ workflows:
           unzip "assets_${CLIENT_ID}.zip" -d ./assets
       - name: Replace assets, .env, and Google services files
         script: |
-          cp ./assets/assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
-          cp ./assets/assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
-          cp ./assets/assets/images/error_image.png ./assets/assets/images/
-          cp ./assets/assets/android/google-services.json ./android/app/
-          cp ./assets/assets/ios/GoogleService-Info.plist ./ios/Runner/
-          cp ./assets/assets/client/client.env ./assets/client/
+          cp ./assets/images/app_launcher_icon.png ./android/app/src/main/res/mipmap/
+          cp ./assets/images/app_launcher_icon.png ./ios/Runner/Assets.xcassets/AppIcon.appiconset/
+          cp ./assets/images/error_image.png ./assets/images/
+          cp ./assets/android/google-services.json ./android/app/
+          cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
+          cp ./assets/client/client.env ./assets/
       - name: Change iOS app name
         script: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleName $APP_NAME" -c "Set :CFBundleDisplayName $APP_NAME" ios/${XCODE_SCHEME}/Info.plist
