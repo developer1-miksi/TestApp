@@ -18,33 +18,35 @@ workflows:
         FIREBASE_TOKEN: your-firebase-ci-token
         APP_NAME: "Default App Name"
         BUNDLE_ID: "com.example.app"
-scripts:
-  - name: Download and unpack client-specific assets
-    script: |
-      echo "Downloading assets from ${ASSETS_URL}"
-      curl -o "assets_${CLIENT_ID}.zip" "${ASSETS_URL}" || echo "Failed to download assets_${CLIENT_ID}.zip"
-      echo "Removing old assets and configuration files"
-      rm -rf ./assets/  # Remove existing assets directory
-      unzip "assets_${CLIENT_ID}.zip" -d ./assets  # Unzip new assets into the directory
-      echo "Adjusting assets directory structure"
-      mv ./assets/assets/* ./assets/  # Move files up from the nested assets directory
-      rm -rf ./assets/assets  # Remove the now empty nested directory
+    scripts:
+      - name: Download and unpack client-specific assets
+        script: |
+          echo "Downloading assets from ${ASSETS_URL}"
+          curl -o "assets_${CLIENT_ID}.zip" "${ASSETS_URL}" || echo "Failed to download assets_${CLIENT_ID}.zip"
+          echo "Removing old assets and configuration files"
+          rm -rf ./assets/  # Remove existing assets directory
+          unzip "assets_${CLIENT_ID}.zip" -d ./assets  # Unzip new assets into the directory
+          echo "Adjusting assets directory structure"
+          mv ./assets/assets/* ./assets/  # Move files up from the nested assets directory
+          rm -rf ./assets/assets  # Remove the now empty nested directory
 
-  - name: Update assets and configuration files
-    script: |
-      # Update Google services files by replacing the old with the new
-      echo "Replacing Google services files"
-      cp ./assets/android/google-services.json ./android/app/
-      cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
+      - name: Update assets and configuration files
+        script: |
+          # Update Google services files by replacing the old with the new
+          echo "Replacing Google services files"
+          rm -f ./android/app/google-services.json
+          rm -f ./ios/Runner/GoogleService-Info.plist
+          cp ./assets/android/google-services.json ./android/app/
+          cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
 
-      # Replace .env file
-      cp ./assets/client/.env ./assets/  # Ensure this path matches the actual structure
+          # Replace .env file
+          cp ./assets/client/.env ./assets/  # Ensure this path matches the actual structure
 
-      # Ensure all packages are fetched
-      flutter pub get
+          # Ensure all packages are fetched
+          flutter pub get
 
-      # Update app icons using flutter_launcher_icons
-      flutter pub run flutter_launcher_icons
+          # Update app icons using flutter_launcher_icons
+          flutter pub run flutter_launcher_icons
 
       - name: Change iOS app name
         script: |
