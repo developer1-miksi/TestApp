@@ -16,10 +16,10 @@ workflows:
       ios_signing:
         provisioning_profiles:
           - profile: profileTestApp
-            environment_variable: THIS_PROFILE_PATH_ON_DISK
+            # environment_variable: ~/Library/MobileDevice/Provisioning Profiles
         certificates:
           - certificate: appsiging
-            environment_variable: THIS_CERTIFICATE_PATH_ON_DISK
+            # environment_variable: ~/Library/MobileDevice/Certificates
       vars:
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
