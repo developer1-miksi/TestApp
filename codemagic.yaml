@@ -4,7 +4,6 @@ definitions:
     # BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
     # ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
 
-
 workflows:
   ios-client-release:
     name: iOS client release
@@ -60,7 +59,7 @@ workflows:
           if [ -f "./assets/client/client.env" ]; then
             cp ./assets/client/client.env ./assets/
           else
-            echo ".env file not found in assets/client folder."
+            echo "client.env file not found in assets/client folder."
           fi
 
           flutter pub get
