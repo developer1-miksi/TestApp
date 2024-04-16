@@ -16,16 +16,20 @@ workflows:
       ios_signing:
         provisioning_profiles:
           - profile: profileTestApp
-            # environment_variable: ~/Library/MobileDevice/Provisioning Profiles
         certificates:
           - certificate: appsiging
-            # environment_variable: ~/Library/MobileDevice/Certificates
       vars:
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
         APP_NAME: "Default App Name"
         BUNDLE_ID: "com.example.app"
     scripts:
+      - name: Debug environment variables
+        script: |
+          echo "App Name: ${APP_NAME}"
+          echo "Bundle ID: ${BUNDLE_ID}"
+          echo "Firebase Token: ${FIREBASE_TOKEN}"
+
       - name: Download and unpack client-specific assets
         script: |
           echo "Downloading assets from ${ASSETS_URL}"
@@ -55,7 +59,7 @@ workflows:
 
       - name: Set bundle id
         script: |
-          sed -i '' -e 's/PRODUCT_BUNDLE_IDENTIFIER \= [^\;]*\;/PRODUCT_BUNDLE_IDENTIFIER = '${BUNDLE_ID}';/' ios/${XCODE_SCHEME}.xcodeproj/project.pbxproj
+          sed -i '' -e "s/PRODUCT_BUNDLE_IDENTIFIER \= [^\;]*\;/PRODUCT_BUNDLE_IDENTIFIER = '${BUNDLE_ID}';/" ios/${XCODE_SCHEME}.xcodeproj/project.pbxproj
           echo "Bundle ID set to: ${BUNDLE_ID}"
 
       - name: Install dependencies
