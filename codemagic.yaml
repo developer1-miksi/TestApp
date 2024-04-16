@@ -20,9 +20,9 @@ workflows:
           - certificate: appsiging
       vars:
         XCODE_SCHEME: "Runner"
-        FIREBASE_TOKEN: your-firebase-ci-token
-        APP_NAME: "Default App Name"
-        BUNDLE_ID: "com.example.app"
+        FIREBASE_TOKEN: ${FIREBASE_TOKEN}
+        APP_NAME: ${APP_NAME}
+        BUNDLE_ID: ${BUNDLE_ID}
     scripts:
       - name: Debug environment variables
         script: |
