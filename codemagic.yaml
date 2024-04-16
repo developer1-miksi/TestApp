@@ -12,7 +12,7 @@ workflows:
       - ${CLIENT_ID}
     environment:
       groups:
-        - env_vars # Make sure this group includes CLIENT_ID and ASSETS_URL
+        - env_vars  # Ensure this group includes CLIENT_ID and ASSETS_URL
       vars:
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
@@ -38,13 +38,13 @@ workflows:
           rm -f ./ios/Runner/GoogleService-Info.plist
           cp ./assets/android/google-services.json ./android/app/
           cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
-
+          
           # Replace .env file
           cp ./assets/client/.env ./assets/  # Ensure this path matches the actual structure
-
+          
           # Ensure all packages are fetched
           flutter pub get
-
+          
           # Update app icons using flutter_launcher_icons
           flutter pub run flutter_launcher_icons
 
@@ -55,6 +55,13 @@ workflows:
       - name: Install dependencies
         script: |
           flutter packages pub get
+
+      - name: iOS code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles
 
       - name: Flutter build ipa and automatic versioning
         script: |
