@@ -12,7 +12,14 @@ workflows:
       - ${CLIENT_ID}
     environment:
       groups:
-        - env_vars  # Ensure this group includes CLIENT_ID and ASSETS_URL
+        - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
+      ios_signing:
+        provisioning_profiles:
+          - profile: profileTestApp
+            environment_variable: THIS_PROFILE_PATH_ON_DISK
+        certificates:
+          - certificate: appsiging
+            environment_variable: THIS_CERTIFICATE_PATH_ON_DISK
       vars:
         XCODE_SCHEME: "Runner"
         FIREBASE_TOKEN: your-firebase-ci-token
@@ -24,37 +31,40 @@ workflows:
           echo "Downloading assets from ${ASSETS_URL}"
           curl -o "assets_${CLIENT_ID}.zip" "${ASSETS_URL}" || echo "Failed to download assets_${CLIENT_ID}.zip"
           echo "Removing old assets and configuration files"
-          rm -rf ./assets/  # Remove existing assets directory
-          unzip "assets_${CLIENT_ID}.zip" -d ./assets  # Unzip new assets into the directory
+          rm -rf ./assets/
+          unzip "assets_${CLIENT_ID}.zip" -d ./assets
           echo "Adjusting assets directory structure"
-          mv ./assets/assets/* ./assets/  # Move files up from the nested assets directory
-          rm -rf ./assets/assets  # Remove the now empty nested directory
+          mv ./assets/assets/* ./assets/
+          rm -rf ./assets/assets
 
       - name: Update assets and configuration files
         script: |
-          # Update Google services files by replacing the old with the new
           echo "Replacing Google services files"
           rm -f ./android/app/google-services.json
           rm -f ./ios/Runner/GoogleService-Info.plist
           cp ./assets/android/google-services.json ./android/app/
           cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
-          
-          # Replace .env file
-          cp ./assets/client/.env ./assets/  # Ensure this path matches the actual structure
-          
-          # Ensure all packages are fetched
+          cp ./assets/client/.env ./assets/
+
           flutter pub get
-          
-          # Update app icons using flutter_launcher_icons
           flutter pub run flutter_launcher_icons
 
       - name: Change iOS app name
         script: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleName $APP_NAME" -c "Set :CFBundleDisplayName $APP_NAME" ios/${XCODE_SCHEME}/Info.plist
 
+      - name: Set bundle id
+        script: |
+          sed -i '' -e 's/PRODUCT_BUNDLE_IDENTIFIER \= [^\;]*\;/PRODUCT_BUNDLE_IDENTIFIER = '${BUNDLE_ID}';/' ios/${XCODE_SCHEME}.xcodeproj/project.pbxproj
+          echo "Bundle ID set to: ${BUNDLE_ID}"
+
       - name: Install dependencies
         script: |
           flutter packages pub get
+
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
 
       - name: iOS code signing
         script: |
