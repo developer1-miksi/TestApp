@@ -4,6 +4,7 @@ definitions:
     # BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
     # ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
 
+
 workflows:
   ios-client-release:
     name: iOS client release
@@ -40,15 +41,27 @@ workflows:
           echo "Adjusting assets directory structure"
           mv ./assets/assets/* ./assets/
           rm -rf ./assets/assets
+          echo "List of files in assets directory:"
+          ls -la ./assets/
 
       - name: Update assets and configuration files
         script: |
           echo "Replacing Google services files"
-          rm -f ./android/app/google-services.json
-          rm -f ./ios/Runner/GoogleService-Info.plist
-          cp ./assets/android/google-services.json ./android/app/
-          cp ./assets/ios/GoogleService-Info.plist ./ios/Runner/
-          cp ./assets/client/.env ./assets/
+          if [ -f "./assets/google-services.json" ]; then
+            cp ./assets/google-services.json ./android/app/
+          else
+            echo "google-services.json not found in assets folder."
+          fi
+          if [ -f "./assets/GoogleService-Info.plist" ]; then
+            cp ./assets/GoogleService-Info.plist ./ios/Runner/
+          else
+            echo "GoogleService-Info.plist not found in assets folder."
+          fi
+          if [ -f "./assets/client/client.env" ]; then
+            cp ./assets/client/client.env ./assets/
+          else
+            echo ".env file not found in assets/client folder."
+          fi
 
           flutter pub get
           flutter pub run flutter_launcher_icons
