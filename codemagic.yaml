@@ -1,9 +1,12 @@
 definitions:
   env_vars: &env_vars
+    flutter: stable
+    xcode: 14.1
+    cocoapods: default
+
     # FIREBASE_PROJECT_ID: your-firebase-project-id
     # BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
     # ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
-
 
 workflows:
   ios-client-release:
@@ -107,7 +110,7 @@ workflows:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true 
+        submit_to_testflight: true
 
       email:
         recipients:
