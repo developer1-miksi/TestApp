@@ -18,7 +18,7 @@ workflows:
       groups:
         - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
       ios_signing:
-        team_id: "G344VHW6HF" 
+        team_id: "G344VHW6HF"
         provisioning_profiles:
           - profile: clientApp1
         certificates:
