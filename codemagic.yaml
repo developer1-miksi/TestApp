@@ -82,7 +82,8 @@ workflows:
       # - name: Set up code signing settings on Xcode project
       #   script: |
       #     xcode-project use-profiles
-
+      - name: Install pods
+        script: find . -name "Podfile" -execdir pod install \;
       - name: iOS code signing
         script: |
           keychain initialize
@@ -100,15 +101,13 @@ workflows:
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - test-results/flutter.json
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
 
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true 
 
       email:
         recipients:
