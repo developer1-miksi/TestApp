@@ -20,7 +20,7 @@ workflows:
       groups:
         - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
       vars:
-        # XCODE_SCHEME: "Runner"
+        XCODE_SCHEME: "Runner"
         # FIREBASE_TOKEN: ${FIREBASE_TOKEN}
         # APP_NAME: ${APP_NAME}
         # BUNDLE_ID: ${BUNDLE_ID}
