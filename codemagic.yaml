@@ -18,6 +18,7 @@ workflows:
       groups:
         - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
       ios_signing:
+        team_id: "G344VHW6HF" 
         provisioning_profiles:
           - profile: clientApp1
         certificates:
@@ -85,14 +86,15 @@ workflows:
       # - name: Set up code signing settings on Xcode project
       #   script: |
       #     xcode-project use-profiles
-      - name: Install pods
-        script: find . -name "Podfile" -execdir pod install \;
       - name: iOS code signing
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles
+
+      - name: Install dependencies
+        script: flutter packages pub get
 
       - name: Flutter build ipa and automatic versioning
         script: |
@@ -101,17 +103,16 @@ workflows:
           --build-name=1.0.$BUILD_NUMBER \
           --build-number=$BUILD_NUMBER\
           --export-options-plist=/Users/builder/export_options.plist
-
     artifacts:
       - build/ios/ipa/*.ipa
-
+      - /tmp/xcodebuild_logs/*.log
+      - test-results/flutter.json
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
-
       email:
         recipients:
           - name@mail.com
