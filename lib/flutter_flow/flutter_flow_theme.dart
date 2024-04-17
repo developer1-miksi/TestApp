@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const kThemeModeKey = '__theme_mode__';
 SharedPreferences? _prefs;
@@ -125,17 +124,10 @@ class LightModeTheme extends FlutterFlowTheme {
   Color get secondaryColor => secondary;
   @Deprecated('Use tertiary instead')
   Color get tertiaryColor => tertiary;
-  final primaryColorENV =
-      dotenv.env['PRIMARY_COLOR'] ?? '#FFFFFF'; // Fallback to white
-  final secondaryColorENV = dotenv.env['SECONDARY_COLOR'] ?? '#000000';
-  final tertiaryColorENV = dotenv.env['TERTIARY_COLOR'] ?? '#000000';
 
-  late Color primary =
-      Color(int.parse(primaryColorENV.substring(1, 7), radix: 16) + 0xFF000000);
-  late Color secondary = Color(
-      int.parse(secondaryColorENV.substring(1, 7), radix: 16) + 0xFF000000);
-  late Color tertiary = Color(
-      int.parse(tertiaryColorENV.substring(1, 7), radix: 16) + 0xFF000000);
+  late Color primary = const Color(0xFF4B39EF);
+  late Color secondary = const Color(0xFF39D2C0);
+  late Color tertiary = const Color(0xFFEE8B60);
   late Color alternate = const Color(0xFFE0E3E7);
   late Color primaryText = const Color(0xFF14181B);
   late Color secondaryText = const Color(0xFF57636C);

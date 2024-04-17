@@ -54,11 +54,22 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           centerTitle: false,
           elevation: 2.0,
         ),
-        body: const SafeArea(
+        body: SafeArea(
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            children: [],
+            children: [
+              Align(
+                alignment: const AlignmentDirectional(0.0, 0.0),
+                child: Text(
+                  'Change 1 to main app',
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily: 'Readex Pro',
+                        letterSpacing: 0.0,
+                      ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
