@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCv1KavCaFh2WIMCn4P3-1ySi219DSk-6c</string>
+	<string>AIzaSyC5AHYI66qQPX67lxhd4eqJNCfxoOMe3Mw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>341350524345</string>
+	<string>243199670529</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.mycompany.testappmain</string>
+	<string>com.mycompany.client1</string>
 	<key>PROJECT_ID</key>
-	<string>test-app-main-lrq4rq</string>
+	<string>test-app-client1-ya0th6</string>
 	<key>STORAGE_BUCKET</key>
-	<string>test-app-main-lrq4rq.appspot.com</string>
+	<string>test-app-client1-ya0th6.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:341350524345:ios:be27f4264e6bfe204d8268</string>
+	<string>1:243199670529:ios:b2ebfa8b1245cabcd7c300</string>
 </dict>
 </plist>
