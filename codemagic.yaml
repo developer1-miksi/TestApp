@@ -16,9 +16,9 @@ workflows:
         - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
       ios_signing:
         provisioning_profiles:
-          - profile: profileTestApp
+          - profile: clientApp1
         certificates:
-          - certificate: appsiging
+          - certificate: testClientApp
       vars:
         XCODE_SCHEME: "Runner"
         # FIREBASE_TOKEN: ${FIREBASE_TOKEN}
