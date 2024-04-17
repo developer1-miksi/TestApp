@@ -4,6 +4,7 @@ definitions:
     # BASE_ASSETS_URL: your-base-assets-url # This might not be needed if ASSETS_URL is fully specified per build
     # ASSETS_URL: "https://example.com/path/to/assets_${CLIENT_ID}.zip" # This should be set dynamically per build
 
+
 workflows:
   ios-client-release:
     name: iOS client release
@@ -13,11 +14,16 @@ workflows:
     environment:
       groups:
         - env_vars # Ensure this group includes CLIENT_ID and ASSETS_URL
+      ios_signing:
+        provisioning_profiles:
+          - profile: clientApp1
+        certificates:
+          - certificate: distributionCertificate
       vars:
         XCODE_SCHEME: "Runner"
-        FIREBASE_TOKEN: ${FIREBASE_TOKEN}
-        APP_NAME: ${APP_NAME}
-        BUNDLE_ID: ${BUNDLE_ID}
+        # FIREBASE_TOKEN: ${FIREBASE_TOKEN}
+        # APP_NAME: ${APP_NAME}
+        # BUNDLE_ID: ${BUNDLE_ID}
     scripts:
       - name: Debug environment variables
         script: |
@@ -72,6 +78,10 @@ workflows:
       - name: Install dependencies
         script: |
           flutter packages pub get
+
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
 
       - name: iOS code signing
         script: |
