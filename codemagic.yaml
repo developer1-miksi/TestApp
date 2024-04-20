@@ -1,28 +1,20 @@
-definitions:
-  env_versions: &env_versions
-    xcode: 14.2
-    cocoapods: default
-
 workflows:
   crete-themed-app-workflow:
+    name: Create Themed app
+    instance_type: mac_mini_m1
+
     triggering:
       events:
         - tag
-    name: Create Themed app
-    instance_type: mac_mini_m1    
+
     environment:
-      flutter: stable
-      #ios_signing:
-      #  provisioning_profiles:
-      #    - profile: clientApp1
-      #  certificates:
-      #    - certificate: distributionCertificate
+      flutter: stable    
 
     scripts:
       - name: Extract CLIENT_ID
         script: |
-          # Assuming CM_BUILD_TAG is set to the tag that triggered the build
-          CLIENT_ID=$(echo $CM_BUILD_TAG | cut -d'_' -f1)
+          # Assuming CM_TAG is set to the tag that triggered the build
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           echo "Extracted CLIENT_ID: $CLIENT_ID"
           # Export the CLIENT_ID so it can be used in subsequent scripts
           export CLIENT_ID
