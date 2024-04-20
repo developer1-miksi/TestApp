@@ -11,40 +11,31 @@ workflows:
       flutter: stable    
 
     scripts:
-      - name: Extract CLIENT_ID
+      - name: Apply client configuration
         script: |
           # Assuming CM_TAG is set to the tag that triggered the build
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           echo "A Build is going to be performed for: $CLIENT_ID"
-
-      - name: Copy Theme for CLIENT_ID to fproject 
-        script: |
-          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          echo "Copy assets for client"
           cp "clients/$CLIENT_ID/flutter_flow_theme.dart" "lib/flutter_flow/flutter_flow_theme.dart"
-
-      - name: Apply custom launcher icon
-        script: |
-          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           cp "clients/$CLIENT_ID/app_launcher_icon.png" "assets/images/app_launcher_icon.png"
-          dart pub add flutter_launcher_icons
-          flutter pub get
-          flutter pub run flutter_launcher_icons -f "clients/clients_flutter_launcher_icons.yaml"
-
-      - name: Apply custom splash icon
-        script: |
-          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           cp "clients/$CLIENT_ID/app_splash_image.png" "assets/images/app_splash_image.png"
+          echo "Add dependencies for preparing assets"
+          flutter pub add flutter_launcher_icons
           flutter pub add flutter_native_splash
           flutter pub get
-          dart run flutter_native_splash:create --path="clients/clients_flutter_native_splash.yaml"      
+          echo "Applying configs"
+          flutter pub run flutter_launcher_icons -f "clients/clients_flutter_launcher_icons.yaml"
+          flutter pub run flutter_native_splash:create --path="clients/clients_flutter_native_splash.yaml"      
+          echo "Successfully applied client configuration"
           
       - name: Get Flutter packages
         script: | 
           flutter packages pub get
 
-      - name: Build AAB with Flutter
-        script: | 
-          flutter build appbundle --release
+      #- name: Build AAB with Flutter
+      #  script: | 
+      #    flutter build appbundle --release
 
       - name: Build APK for Debug
         script: | 
