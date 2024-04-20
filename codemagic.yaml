@@ -15,16 +15,16 @@ workflows:
         script: |
           # Assuming CM_TAG is set to the tag that triggered the build
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
-          echo "Extracted CLIENT_ID: $CLIENT_ID"
-          # Export the CLIENT_ID so it can be used in subsequent scripts
-          export CLIENT_ID
+          echo "A Build is going to be performed for: $CLIENT_ID"
 
       - name: Copy Theme for CLIENT_ID to fproject 
         script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           cp "clients/$CLIENT_ID/flutter_flow_theme.dart" "lib/flutter_flow/flutter_flow_theme.dart"
 
       - name: Apply custom launcher icon
         script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           cp "clients/$CLIENT_ID/app_launcher_icon.png" "assets/images/app_launcher_icon.png"
           dart pub add flutter_launcher_icons
           flutter pub get
@@ -32,6 +32,7 @@ workflows:
 
       - name: Apply custom splash icon
         script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           cp "clients/$CLIENT_ID/app_splash_image.png" "assets/images/app_splash_image.png"
           flutter pub add flutter_native_splash
           flutter pub get
