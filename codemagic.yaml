@@ -70,4 +70,4 @@ workflows:
       #  issuer_id: $APP_STORE_CONNECT_ISSUER_ID
       email:
         recipients:
-          - name@mail.com
+          - alexalejandroem@gmail.com
