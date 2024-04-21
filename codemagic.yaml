@@ -2,6 +2,8 @@ workflows:
   crete-themed-app-workflow:
     name: Create Themed app
     instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: "Test app - Codemagic"
 
     triggering:
       events:
@@ -28,6 +30,12 @@ workflows:
           flutter pub run flutter_launcher_icons -f "clients/clients_flutter_launcher_icons.yaml"
           flutter pub run flutter_native_splash:create --path="clients/clients_flutter_native_splash.yaml"      
           echo "Successfully applied client configuration"
+      
+      - name: Change iOS Bundle Identifier
+        script: |
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $NEW_BUNDLE_IDENTIFIER" "$FCI_BUILD_DIR/ios/Runner/Info.plist"
+          echo "Bundle Identifier changed to $NEW_BUNDLE_IDENTIFIER"
           
       - name: Get Flutter packages
         script: | 
@@ -40,18 +48,22 @@ workflows:
       - name: Build APK for Debug
         script: | 
           flutter build apk --debug
+      
+      - name: Build iOS for Release
+        script: | 
+          flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S)  # Build number to avoid conflicts in versioning
 
     artifacts:
+      - build/ios/ipa/*.ipa
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
 
     publishing:
-      #app_store_connect:
-      #  api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-      #  key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-      #  issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+      app_store_connect:
+        auth: integration 
+        submit_to_testflight: true
       email:
         recipients:
           - alexalejandroem@gmail.com
