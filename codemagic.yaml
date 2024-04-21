@@ -55,7 +55,7 @@ workflows:
       
       - name: Build iOS for Release
         script: | 
-          flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S)  # Build number to avoid conflicts in versioning
+          flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S) --codesign
 
     artifacts:
       - build/ios/ipa/*.ipa
