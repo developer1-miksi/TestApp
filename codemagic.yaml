@@ -9,8 +9,10 @@ workflows:
           - TestClient1
           - TestClient1Development
         provisioning_profiles:
+          - testappmain
+          - testappmainDevelopment
           - client1
-          - client1Distribution
+          - client1Development
 
     integrations:
       app_store_connect: Test app - Codemagic
@@ -20,6 +22,31 @@ workflows:
         - tag    
 
     scripts:
+      - name: Create exportOptions.plist with dynamic settings
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          PROVISIONING_PROFILE_NAME="$CLIENT_ID Test"  # Adjust naming convention as needed
+          cat << EOF > $FCI_BUILD_DIR/exportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store-connect</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>$NEW_BUNDLE_IDENTIFIER</key>
+                  <string>$PROVISIONING_PROFILE_NAME</string>
+              </dict>
+              <key>teamID</key>
+              <string>G344VHW6HF</string>
+          </dict>
+          </plist>
+          EOF
+          echo "exportOptions.plist created with bundle ID $NEW_BUNDLE_IDENTIFIER and profile $PROVISIONING_PROFILE_NAME"
+
+
       - name: Apply client configuration
         script: |
           # Assuming CM_TAG is set to the tag that triggered the build
@@ -113,7 +140,7 @@ workflows:
           xcodebuild -exportArchive \
                      -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
                      -exportPath $FCI_BUILD_DIR/build \
-                     -exportOptionsPlist ./clients/$CLIENT_ID/exportOptions.plist
+                     -exportOptionsPlist ./exportOptions.plist
       
       # - name: Build iOS for Release
       #   script: | 
