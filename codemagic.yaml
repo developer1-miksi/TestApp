@@ -99,7 +99,7 @@ workflows:
                 -scheme Runner \
                 -configuration Release \
                 -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
-                PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
+                PROVISIONING_PROFILE_SPECIFIER="Client1 Test" \
                 DEVELOPMENT_TEAM="G344VHW6HF" \
                 CODE_SIGN_STYLE=Manual \
                 PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER"
