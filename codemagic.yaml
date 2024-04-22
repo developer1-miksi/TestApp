@@ -26,7 +26,7 @@ workflows:
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
-          PROVISIONING_PROFILE_NAME="$CLIENT_ID Test"  # Adjust naming convention as needed
+          PROVISIONING_PROFILE_NAME="$CLIENT_ID"  # Adjust naming convention as needed
           cat << EOF > $FCI_BUILD_DIR/exportOptions.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
