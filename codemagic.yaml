@@ -10,8 +10,7 @@ workflows:
           - TestClient1Development
         provisioning_profiles:
           - client1
-          - TestAppMainDevelopment
-          - TestAppMain
+          - client1Distribution
 
     integrations:
       app_store_connect: Test app - Codemagic
