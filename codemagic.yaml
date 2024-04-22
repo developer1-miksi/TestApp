@@ -57,15 +57,15 @@ workflows:
       #   script: | 
       #     flutter build apk --debug
 
-      - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
-
       - name: Change iOS Bundle Identifier
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
           /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $NEW_BUNDLE_IDENTIFIER" "$FCI_BUILD_DIR/ios/Runner/Info.plist"
           echo "Bundle Identifier changed to $NEW_BUNDLE_IDENTIFIER"
+      
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
 
 
       - name: Prepare Xcode for Build
@@ -84,7 +84,7 @@ workflows:
                  -sdk iphoneos \
                  -configuration Release \
                  -derivedDataPath build/ios \
-                 PROVISIONING_PROFILE_SPECIFIER="Client1 Test" \
+                 PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
                  DEVELOPMENT_TEAM=G344VHW6HF \
                  CODE_SIGN_STYLE=Manual \
                  clean build
