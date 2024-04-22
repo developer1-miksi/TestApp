@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>  <!-- or 'ad-hoc' or 'enterprise' depending on your needs -->
+    <string>app-store-connect</string>  <!-- or 'ad-hoc' or 'enterprise' depending on your needs -->
     <key>provisioningProfiles</key>
     <dict>
         <key>com.mycompany.testappmain</key>
