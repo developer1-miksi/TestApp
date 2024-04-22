@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store</string>  <!-- or 'ad-hoc' or 'enterprise' depending on your needs -->
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.mycompany.client1</key>
+        <string>Client1 Test</string>
+    </dict>
+    <key>teamID</key>
+    <string>G344VHW6HF</string>
+</dict>
+</plist>

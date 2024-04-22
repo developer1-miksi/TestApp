@@ -89,12 +89,37 @@ workflows:
                  CODE_SIGN_STYLE=Manual \
                  PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER" \
                  clean build
+
+      - name: Archive iOS app
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          echo "Archiving for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID"
+          xcodebuild archive -workspace ios/Runner.xcworkspace \
+                -scheme Runner \
+                -configuration Release \
+                -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
+                PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
+                DEVELOPMENT_TEAM="G344VHW6HF" \
+                CODE_SIGN_STYLE=Manual \
+                PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER"
+
+      - name: Export IPA from archive
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          echo "Exporting for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID"
+          xcodebuild -exportArchive \
+                     -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
+                     -exportPath $FCI_BUILD_DIR/build \
+                     -exportOptionsPlist /clients/$CLIENT_ID/exportOptions.plist
       
       # - name: Build iOS for Release
       #   script: | 
       #     flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S) --codesign
 
     artifacts:
+      - build/ios/build/*.ipa  # Adjust based on your actual output directory from the export command
       - build/ios/Build/Products/Release-iphoneos/*.ipa
       - build/ios/ipa/*.ipa
       # - build/**/outputs/**/*.apk
