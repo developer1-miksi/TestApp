@@ -44,6 +44,11 @@ workflows:
       - name: Get Flutter packages
         script: | 
           flutter packages pub get
+      
+      # TODO Change package name for Android as well
+      # -name: Change Android Package name
+      # script: |
+      # echo "Change name to com.mycompany.$CLIENT_ID"
 
       #- name: Build AAB with Flutter
       #  script: | 
