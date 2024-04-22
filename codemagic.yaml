@@ -120,6 +120,7 @@ workflows:
       #     flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S) --codesign
 
     artifacts:
+      - build/*.ipa
       - build/ios/build/*.ipa  # Adjust based on your actual output directory from the export command
       - build/ios/Build/Products/Release-iphoneos/*.app
       - build/ios/Build/Products/Release-iphoneos/*.ipa
