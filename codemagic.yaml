@@ -122,6 +122,7 @@ workflows:
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          PROVISIONING_PROFILE="${CLIENT_ID}Development"
           echo "Archiving for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID and $PROVISIONING_PROFILE_NAME"
           xcodebuild archive -workspace ios/Runner.xcworkspace \
                 -scheme Runner \
