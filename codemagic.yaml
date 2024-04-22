@@ -87,7 +87,7 @@ workflows:
                  PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
                  DEVELOPMENT_TEAM=G344VHW6HF \
                  CODE_SIGN_STYLE=Manual \
-                 PRODUCT_BUNDLE_IDENTIFIER=com.mycompany.$(CLIENT_ID) \
+                 PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER" \
                  clean build
       
       # - name: Build iOS for Release
