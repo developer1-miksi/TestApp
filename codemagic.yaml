@@ -82,7 +82,7 @@ workflows:
                  -sdk iphoneos \
                  -configuration Release \
                  -derivedDataPath build/ios \
-                 PROVISIONING_PROFILE_SPECIFIER="$CLIENT_ID" \
+                 PROVISIONING_PROFILE_SPECIFIER="Client1 Test" \
                  DEVELOPMENT_TEAM=G344VHW6HF \
                  CODE_SIGN_STYLE=Manual \
                  clean build
