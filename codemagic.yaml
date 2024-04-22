@@ -58,6 +58,9 @@ workflows:
       #   script: | 
       #     flutter build apk --debug
 
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+
       - name: Change iOS Bundle Identifier
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
