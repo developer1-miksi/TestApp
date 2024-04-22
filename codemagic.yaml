@@ -71,8 +71,8 @@ workflows:
           # Assuming your Info.plist is at the default location
           PLIST_PATH="$FCI_BUILD_DIR/ios/Runner/Info.plist"
           # Set CFBundleVersion to Codemagic build number
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CM_BUILD_NUMBER" "$PLIST_PATH"
-          echo "Updated CFBundleVersion to $CM_BUILD_NUMBER"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "$PLIST_PATH"
+          echo "Updated CFBundleVersion to $BUILD_NUMBER"
 
       - name: Prepare Xcode for Build
         script: |
