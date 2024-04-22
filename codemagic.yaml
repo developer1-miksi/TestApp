@@ -58,18 +58,39 @@ workflows:
       #  script: | 
       #    flutter build appbundle --release
 
-      - name: Build APK for Debug
-        script: | 
-          flutter build apk --debug
+      # - name: Build APK for Debug
+      #   script: | 
+      #     flutter build apk --debug
+
+      - name: Prepare Xcode for Build
+        script: |
+          cd ios
+          pod install
+          cd ..
+
+      - name: Build iOS app using xcodebuild
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          echo "Building for $CLIENT_ID"
+          xcodebuild -workspace ios/Runner.xcworkspace \
+                     -scheme Runner \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     -derivedDataPath build/ios \
+                     CODE_SIGN_STYLE=Automatic \
+                     DEVELOPMENT_TEAM=G344VHW6HF \
+                     PROVISIONING_PROFILE_SPECIFIER='$CLIENT_ID' \
+                     clean build
       
-      - name: Build iOS for Release
-        script: | 
-          flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S) --codesign
+      # - name: Build iOS for Release
+      #   script: | 
+      #     flutter build ios --release --build-number=$(date +%Y%m%d%H%M%S) --codesign
 
     artifacts:
+      - build/ios/Build/Products/Release-iphoneos/*.ipa
       - build/ios/ipa/*.ipa
-      - build/**/outputs/**/*.apk
-      - build/**/outputs/**/*.aab
+      # - build/**/outputs/**/*.apk
+      # - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
 
