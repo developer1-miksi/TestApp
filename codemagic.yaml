@@ -28,7 +28,7 @@ workflows:
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           echo "A Build is going to be performed for: $CLIENT_ID"
           echo "Copy assets for client"
-          cp "clients/$CLIENT_ID/backend" "lib/"
+          cp -r "clients/$CLIENT_ID/backend" "lib/"
           cp "clients/$CLIENT_ID/flutter_flow_theme.dart" "lib/flutter_flow/flutter_flow_theme.dart"
           cp "clients/$CLIENT_ID/app_launcher_icon.png" "assets/images/app_launcher_icon.png"
           cp "clients/$CLIENT_ID/app_splash_image.png" "assets/images/app_splash_image.png"
