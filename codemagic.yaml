@@ -105,13 +105,14 @@ workflows:
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
-          echo "Building for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID"
+          PROVISIONING_PROFILE="${CLIENT_ID}Development"
+          echo "Building for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID and $PROVISIONING_PROFILE_NAME"
           xcodebuild -workspace ios/Runner.xcworkspace \
                  -scheme Runner \
                  -sdk iphoneos \
                  -configuration Release \
                  -derivedDataPath build/ios \
-                 PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
+                 PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE" \
                  DEVELOPMENT_TEAM=G344VHW6HF \
                  CODE_SIGN_STYLE=Manual \
                  PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER" \
@@ -121,13 +122,13 @@ workflows:
         script: |
           CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
-          echo "Archiving for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID"
+          echo "Archiving for $NEW_BUNDLE_IDENTIFIER with $CLIENT_ID and $PROVISIONING_PROFILE_NAME"
           xcodebuild archive -workspace ios/Runner.xcworkspace \
                 -scheme Runner \
                 -configuration Release \
                 -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
                 -destination 'generic/platform=iOS' \
-                PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
+                PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE" \
                 DEVELOPMENT_TEAM="G344VHW6HF" \
                 CODE_SIGN_STYLE=Manual \
                 PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER"
