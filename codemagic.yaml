@@ -99,7 +99,8 @@ workflows:
                 -scheme Runner \
                 -configuration Release \
                 -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
-                PROVISIONING_PROFILE_SPECIFIER="Client1 Test" \
+                -destination 'generic/platform=iOS' \
+                PROVISIONING_PROFILE_SPECIFIER="Client1TestDevelopment" \
                 DEVELOPMENT_TEAM="G344VHW6HF" \
                 CODE_SIGN_STYLE=Manual \
                 PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER"
@@ -120,6 +121,7 @@ workflows:
 
     artifacts:
       - build/ios/build/*.ipa  # Adjust based on your actual output directory from the export command
+      - build/ios/Build/Products/Release-iphoneos/*.app
       - build/ios/Build/Products/Release-iphoneos/*.ipa
       - build/ios/ipa/*.ipa
       # - build/**/outputs/**/*.apk
