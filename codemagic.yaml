@@ -21,32 +21,8 @@ workflows:
       events:
         - tag    
 
+   
     scripts:
-      - name: Create exportOptions.plist with dynamic settings
-        script: |
-          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
-          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
-          PROVISIONING_PROFILE_NAME="$CLIENT_ID"  # Adjust naming convention as needed
-          cat << EOF > $FCI_BUILD_DIR/exportOptions.plist
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store-connect</string>
-              <key>provisioningProfiles</key>
-              <dict>
-                  <key>$NEW_BUNDLE_IDENTIFIER</key>
-                  <string>$PROVISIONING_PROFILE_NAME</string>
-              </dict>
-              <key>teamID</key>
-              <string>G344VHW6HF</string>
-          </dict>
-          </plist>
-          EOF
-          echo "exportOptions.plist created with bundle ID $NEW_BUNDLE_IDENTIFIER and profile $PROVISIONING_PROFILE_NAME"
-
-
       - name: Apply client configuration
         script: |
           # Assuming CM_TAG is set to the tag that triggered the build
@@ -65,7 +41,6 @@ workflows:
           flutter pub run flutter_launcher_icons -f "clients/clients_flutter_launcher_icons.yaml"
           flutter pub run flutter_native_splash:create --path="clients/clients_flutter_native_splash.yaml"      
           echo "Successfully applied client configuration"
-
           
       - name: Get Flutter packages
         script: | 
@@ -90,10 +65,14 @@ workflows:
           NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
           /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $NEW_BUNDLE_IDENTIFIER" "$FCI_BUILD_DIR/ios/Runner/Info.plist"
           echo "Bundle Identifier changed to $NEW_BUNDLE_IDENTIFIER"
-      
-      #- name: Set up code signing settings on Xcode project
-      #  script: xcode-project use-profiles
 
+      - name: Set Bundle Version
+        script: |
+          # Assuming your Info.plist is at the default location
+          PLIST_PATH="$FCI_BUILD_DIR/ios/Runner/Info.plist"
+          # Set CFBundleVersion to Codemagic build number
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CM_BUILD_NUMBER" "$PLIST_PATH"
+          echo "Updated CFBundleVersion to $CM_BUILD_NUMBER"
 
       - name: Prepare Xcode for Build
         script: |
@@ -133,6 +112,30 @@ workflows:
                 DEVELOPMENT_TEAM="G344VHW6HF" \
                 CODE_SIGN_STYLE=Manual \
                 PRODUCT_BUNDLE_IDENTIFIER="$NEW_BUNDLE_IDENTIFIER"
+
+      - name: Create exportOptions.plist with dynamic settings
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          PROVISIONING_PROFILE_NAME="$CLIENT_ID"  # Adjust naming convention as needed
+          cat << EOF > $FCI_BUILD_DIR/exportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store-connect</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>$NEW_BUNDLE_IDENTIFIER</key>
+                  <string>$PROVISIONING_PROFILE_NAME</string>
+              </dict>
+              <key>teamID</key>
+              <string>G344VHW6HF</string>
+          </dict>
+          </plist>
+          EOF
+          echo "exportOptions.plist created with bundle ID $NEW_BUNDLE_IDENTIFIER and profile $PROVISIONING_PROFILE_NAME"
 
       - name: Export IPA from archive
         script: |
