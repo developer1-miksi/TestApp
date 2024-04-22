@@ -7,8 +7,10 @@ workflows:
       ios_signing:
         certificates:
           - TestClient1
+          - TestClient1Development
         provisioning_profiles:
           - Client1Test
+          - Client1TestDevelopment
 
     integrations:
       app_store_connect: Test app - Codemagic
