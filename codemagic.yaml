@@ -113,7 +113,7 @@ workflows:
           xcodebuild -exportArchive \
                      -archivePath $FCI_BUILD_DIR/build/Runner.xcarchive \
                      -exportPath $FCI_BUILD_DIR/build \
-                     -exportOptionsPlist /clients/$CLIENT_ID/exportOptions.plist
+                     -exportOptionsPlist ./clients/$CLIENT_ID/exportOptions.plist
       
       # - name: Build iOS for Release
       #   script: | 

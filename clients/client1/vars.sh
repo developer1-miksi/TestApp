@@ -1,0 +1,2 @@
+NEW_BUNDLE_IDENTIFIER=com.mycompany.client1
+PROVISIONING_PROFILE_SPECIFIER=Client1TestDevelopment
