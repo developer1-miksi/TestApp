@@ -40,13 +40,6 @@ workflows:
           flutter pub run flutter_native_splash:create --path="clients/clients_flutter_native_splash.yaml"      
           echo "Successfully applied client configuration"
 
-      - name: Change iOS Bundle Identifier
-        script: |
-          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
-          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
-          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $NEW_BUNDLE_IDENTIFIER" "$FCI_BUILD_DIR/ios/Runner/Info.plist"
-          echo "Bundle Identifier changed to $NEW_BUNDLE_IDENTIFIER"
-
           
       - name: Get Flutter packages
         script: | 
@@ -59,6 +52,14 @@ workflows:
       # - name: Build APK for Debug
       #   script: | 
       #     flutter build apk --debug
+
+      - name: Change iOS Bundle Identifier
+        script: |
+          CLIENT_ID=$(echo $CM_TAG | cut -d'_' -f1)
+          NEW_BUNDLE_IDENTIFIER="com.mycompany.$CLIENT_ID"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $NEW_BUNDLE_IDENTIFIER" "$FCI_BUILD_DIR/ios/Runner/Info.plist"
+          echo "Bundle Identifier changed to $NEW_BUNDLE_IDENTIFIER"
+
 
       - name: Prepare Xcode for Build
         script: |
