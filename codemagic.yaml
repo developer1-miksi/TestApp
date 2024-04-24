@@ -9,6 +9,8 @@ workflows:
           - TestClient1
           - TestClient1Development
         provisioning_profiles:
+          - clientTestTwo
+          - clientTestTwoDevelopment
           - testappmain
           - testappmainDevelopment
           - client1
