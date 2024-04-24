@@ -1,6 +1,9 @@
 workflows:
   crete-themed-app-workflow:
-    name: Create Themed app
+    name: Create Themed app    
+    triggering:
+      events:
+        - tag
     instance_type: mac_mini_m1
     environment:
       flutter: stable    
@@ -17,12 +20,7 @@ workflows:
           - client1Development
 
     integrations:
-      app_store_connect: Test app - Codemagic
-
-    triggering:
-      events:
-        - tag    
-
+      app_store_connect: Test app - Codemagic 
    
     scripts:
       - name: Apply client configuration
