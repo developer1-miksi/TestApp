@@ -24,6 +24,7 @@ jobs:
         run: |
           git fetch origin
           git checkout automated-builds
+          git pull
           git merge --no-ff origin/flutterflow -m "Merging changes from flutterflow to automated-builds"
           git push origin automated-builds
 
