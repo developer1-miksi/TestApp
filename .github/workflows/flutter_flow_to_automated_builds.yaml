@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - flutterflow
+  workflow_dispatch:
 
 jobs:
   merge-and-tag:
