@@ -1,0 +1,39 @@
+name: Merge and Tag Automation
+
+on:
+  push:
+    branches:
+      - flutter-flow
+
+jobs:
+  merge-and-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Merge flutter-flow to automated-builds
+        run: |
+          git fetch origin
+          git checkout automated-builds
+          git merge --no-ff origin/flutter-flow -m "Merging changes from flutter-flow to automated-builds"
+          git push origin automated-builds
+
+      - name: Find client folders and create tags
+        run: |
+          for dir in clients/*; do
+            if [ -d "$dir" ]; then
+              client_name=$(basename $dir)
+              unique_tag="${client_name}_$(date +%s)"  # Unique tag using UNIX timestamp
+              echo "Tagging $client_name with $unique_tag"
+              git tag "$unique_tag" -m "Triggering build for $client_name"
+            fi
+          done
+          git push origin --tags
