@@ -3,7 +3,7 @@ name: Merge and Tag Automation
 on:
   push:
     branches:
-      - flutter-flow
+      - flutterflow
 
 jobs:
   merge-and-tag:
